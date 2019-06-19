@@ -104,13 +104,15 @@ class Life360Dev extends Homey.Device {
         
                     this.setCapabilityValue("lastSeen", lastSeen).catch(e => {
                         this.log(`Unable to set lastSeen: ${ e.message }`);
-                    });  
+                    });
+
+                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>0 ? "-" : clouddata.location.speed).catch(e => {
+                        this.log(`Unable to set positionType: ${ e.message }`);
+                    });
                 }
 
 
-                // this.setCapabilityValue("location", clouddata.locationEnabled).catch(e => {
-                //     this.log(`Unable to set positionType: ${ e.message }`);
-                // });
+
 
                 let batt = Math.round(clouddata.location.battery);
                 let batteryStatus = "Charged";

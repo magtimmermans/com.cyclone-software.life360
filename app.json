@@ -69,19 +69,17 @@
       "uiComponent": "sensor",
       "icon": "./drivers/life360/assets/battery.svg"
     },
-    "location": {
-      "type": "boolean",
+    "drvSpeed": {
+      "type": "number",
       "title": {
-          "en": "Location",
-          "nl": "Locatie Voorziening"
+          "en": "Speed",
+          "nl": "Snelheid"
       },
       "getable": true,
       "setable": false,
       "insights": true,
-      "insightsTitleTrue": { "en": "On" },
-      "insightsTitleFalse": { "en": "Off" },
       "uiComponent": "sensor",
-      "icon": "./drivers/life360/assets/gps.svg"
+      "icon": "./drivers/life360/assets/speedometer.svg"
     },
     "lastSeen": {
       "type": "string",
@@ -107,7 +105,7 @@
         },
         "class": "other",
         "capabilities": [
-            "measure_battery", "Distance","positionType", "batteryCharged", "location", "lastSeen"
+            "measure_battery", "Distance","positionType", "batteryCharged", "drvSpeed", "lastSeen"
         ],
         "pair": [
           {
@@ -128,35 +126,6 @@
             "id": "add_devices",
             "template": "add_devices"
           }
-        ],
-        "settings": [	
-          {	
-            "type": "group",	
-            "label": {	
-              "en": "Life360 Information",	
-              "nl": "Life360 informatie"	
-            },	
-            "children": [	
-              {	
-                "id": "username",	
-                "type": "text",	
-                "label": {	
-                  "en": "Username",	
-                  "nl": "Gebruikersnaam"	
-                },	
-                "value": ""	
-              },	
-              {	
-                "id": "password",	
-                "type": "password",	
-                "label": {	
-                  "en": "Password",	
-                  "nl": "Wachtwoord"	
-                },	
-                "value": "password"	
-              }	
-            ]	
-          }	
         ]
   }],
   "flow": {
