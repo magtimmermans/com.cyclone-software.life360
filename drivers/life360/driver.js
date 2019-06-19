@@ -26,7 +26,15 @@ class FamilyIPhoneDriver extends Homey.Driver {
             }
         });
 
-
+        if (!this.settings) {
+            this.settings = {
+                "synctime": 3,
+                "homerange": 100,
+                "invisble": false,
+                "username" : "",
+                "password" : ""
+            };
+        }
 
 
         // Start syncing periodically.
@@ -77,12 +85,13 @@ class FamilyIPhoneDriver extends Homey.Driver {
         return new Promise(function(resolve, reject) {
          try {
                   //  can I reuse the session/?? Check!!      
-                  life360.authenticate(username, password).then(session => {
-                        circles.forEach(function (circleID) {
-                            life360.circle(session, circleID).then(circle => {
+                  life360.authenticate(me.settings.username, me.settings.password).then(session => {
+                       life360.circles(session).then(circles =>{
+                         circles.forEach(function (objCircle) {
+                            life360.circle(session, objCircle.id).then(circle => {
                                 circle.members.forEach(member => {
                                     // update devices
-                                    let homeyDevice = this.getDevice({id: member.id});
+                                    let homeyDevice = me.getDevice({id: member.id});
                             		if (homeyDevice instanceof Homey.Device) {
                                             // update device
                                             homeyDevice.updateCloudData(member);
@@ -90,7 +99,8 @@ class FamilyIPhoneDriver extends Homey.Driver {
                                 })
                             });    
                         });
-                        resolve(true);
+                        resolve(true);                          
+                       });
                   })
                   .catch(err => {
                     console.log(err);
@@ -159,28 +169,39 @@ class FamilyIPhoneDriver extends Homey.Driver {
             }
         })
 
-        socket.on('list_devices', async (_, callback) => {
+        socket.on('list_devices', (_, callback) => {
             try {
                 let devices = [];
 
-                const circles = await life360.circles(session);
-
-                circles.forEach(function (circleID) {
-                    life360.circle(session, circleID).then(circle => {
-                        const devs = circle.members.map(m => ({
-                            name: m.firstName,
-                            data: { id: m.id},
-                            settings: {circleID = circle.id }
-                        }))
-                        devices = devices.concat(devs);
-                    });    
+                life360.circles(session).then(async(circles) => {
+                    if (circles.length == 0) {
+                        callback(new Error("No circles in your Life360."));
+                    }        
+                    await asyncForEach(circles,async(objCircle) => {
+                        const devs = await life360.circle(session, objCircle.id).then(circle => {
+                            return circle.members.map(m => ({
+                                name: m.firstName,
+                                data: { id: m.id},
+                                settings: {circleID : circle.id }
+                            }))
+                        });
+                        devices = devices.concat(devs);    
+                        console.log(devices);
+                    });
+                    callback(null, devices)
                 });
-                callback(null, devices)
+                //callback(null, devices)
             } catch (error) {
                 this.error(error)
                 callback(error)
             }
         })
+    }
+}
+
+const asyncForEach = async (array, callback) => {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array)
     }
 }
 

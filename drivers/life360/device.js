@@ -2,6 +2,8 @@
 'use strict';
 
 const Homey = require('homey');
+const util = require('util')
+
 
 
 const formatValue = t => Math.round(t.toFixed(1) * 10) / 10;
@@ -74,6 +76,8 @@ class Life360Dev extends Homey.Device {
     }
 
     updateCloudData(clouddata) {
+        this.log(`Updating device: ${clouddata.firstName}`);
+        //console.log(util.inspect(clouddata, false, null, true /* enable colors */))
 
         try {
             if (clouddata)
@@ -98,7 +102,7 @@ class Life360Dev extends Homey.Device {
                     });
         
                     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
-                    d.setUTCSeconds(clouddata.location.timeStamp);
+                    d.setUTCSeconds(clouddata.location.timestamp);
         
                     let lastSeen = this.toLocalTime(d).toISOString().replace('T', ' ').substr(0, 19)
         
@@ -106,8 +110,8 @@ class Life360Dev extends Homey.Device {
                         this.log(`Unable to set lastSeen: ${ e.message }`);
                     });
 
-                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>0 ? "-" : clouddata.location.speed).catch(e => {
-                        this.log(`Unable to set positionType: ${ e.message }`);
+                    this.setCapabilityValue("drvSpeed", (clouddata.location.speed>0 ? clouddata.location.speed : "-")).catch(e => {
+                        this.log(`Unable to set driveSpeed: ${ e.message }`);
                     });
                 }
 
@@ -116,6 +120,7 @@ class Life360Dev extends Homey.Device {
 
                 let batt = Math.round(clouddata.location.battery);
                 let batteryStatus = "Charged";
+                //console.log(`batt:${batt}, batteryPercentage ${this.batteryPercentage}`);
                 if (batt<100) {
                     (batt<=this.batteryPercentage) ? batteryStatus="NotCharging" : batteryStatus="Charging";
                 }
@@ -159,7 +164,7 @@ class Life360Dev extends Homey.Device {
 	}
 
     getState(state){
-        return state === '1' ? "WiFi" : "Non WiFi";
+        return (state == '1') ? "WiFi" : "Non WiFi";
     }
 
     setPresence(distance){
@@ -219,8 +224,6 @@ class Life360Dev extends Homey.Device {
             });
         }
     }
-
-
 }
 
 module.exports = Life360Dev;

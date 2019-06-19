@@ -70,7 +70,7 @@
       "icon": "./drivers/life360/assets/battery.svg"
     },
     "drvSpeed": {
-      "type": "number",
+      "type": "string",
       "title": {
           "en": "Speed",
           "nl": "Snelheid"
@@ -110,10 +110,7 @@
         "pair": [
           {
             "id": "login_credentials",
-            "template": "login_credentials",
-            "options": {
-              "logo": "pair.svg"
-            }
+            "template": "login_credentials"
           },
           {
             "id": "list_devices",
