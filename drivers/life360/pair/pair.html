@@ -1,0 +1,46 @@
+<script type="text/javascript">
+
+
+    Homey.setTitle(__('Search Atag One'));
+
+    $("#pairblock").hide();
+
+    //Homey.emit('press_button');
+
+    Homey.emit('search_devices', {}, function(err, result) {
+        if (!err) {
+            $('#text').text('ATAG One ID:' + result.devid);
+            $('#ipaddress').text('ip-address :' + result.ip);
+            $('#ipfield').val(result.ip);
+            $("#pairblock").show();
+        } else {
+            $('#text').text('<font color="red"><b>Device not found</b></font>');
+        }
+    });
+
+    function pairdevice() {
+        $('#ipaddress').text('');
+        $('#text').text('Checking authorization...');
+        Homey.emit('pair_device', $('#ipfield').val(), function(err, result) {
+            if (!err) {
+                console.log(result);
+                if (result) {
+                    $('#text').text('Authorized');
+                    Homey.showView("list_thermostats");
+                } else
+                    $('#text').text('NOT Authorized, please accept on ATAG ONE Device and try pairing again!');
+            } else
+                $('#text').text(result);
+        });
+    }
+</script>
+
+<fieldset id='searchblock'>
+    <div id='text'>Searching atag one ...</div>
+    <div id='ipaddress'></div>
+    <input type="hidden" id="ipfield" readonly value="">
+</fieldset>
+
+<fieldset id='pairblock'>
+    <button class="button" onclick="pairdevice()">Start Pairing</button>
+</fieldset>

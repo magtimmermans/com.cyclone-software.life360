@@ -1,0 +1,291 @@
+{
+  "id": "com.cyclone-software.life360",
+  "version": "1.0.0",
+  "compatibility": ">=2.0.0",
+  "sdk": 2,
+  "name": {
+    "en": "Life 360"
+  },
+  "brandColor": "#E8461D",
+  "homeyCommunityTopicId": 8016,
+  "contributing": {
+      "donate": {
+          "paypal": {
+              "username": "marceltimmermans"
+          }
+      }
+  },
+  "description": {
+    "en": "Show your Life360 App location information on homey",
+    "nl": "Laat uw lokatie data zien van u Life260 App"
+  },
+  "category": [
+    "internet"
+  ],
+  "permissions": [
+    "homey:manager:geolocation"
+  ],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "author": {
+    "name": "Marcel Timmermans",
+    "email": "marcel@timmermans.us"
+  },
+  "capabilities" : {
+       "Distance": {
+          "type": "string",
+          "title": {
+              "en": "Distance from Homey",
+              "nl": "Afstand tot Homey"
+          },
+          "getable": true,
+          "setable": false,
+          "preventInsights": true,
+          "uiComponent": "sensor",
+          "icon": "./drivers/life360/assets/distance.svg"
+      },
+      "positionType": {
+        "type": "string",
+        "title": {
+            "en": "Position Type",
+            "nl": "Locatie op basis van"
+        },
+        "getable": true,
+        "setable": false,
+        "preventInsights": true,
+        "icon": "./drivers/life360/assets/location.svg"
+    },
+    "batteryCharged": {
+      "type": "string",
+      "title": {
+          "en": "Battery status",
+          "nl": "Accu status"
+      },
+      "getable": true,
+      "setable": false,
+      "preventInsights": true,
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/battery.svg"
+    },
+    "location": {
+      "type": "boolean",
+      "title": {
+          "en": "Location",
+          "nl": "Locatie Voorziening"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "insightsTitleTrue": { "en": "On" },
+      "insightsTitleFalse": { "en": "Off" },
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/gps.svg"
+    },
+    "lastSeen": {
+      "type": "string",
+      "title": {
+          "en": "Lastseen",
+          "nl": "Laatst gezien"
+      },
+      "getable": true,
+      "setable": false,
+      "preventInsights": true,
+      "icon": "./drivers/life360/assets/lastseen.svg"
+    }
+  },
+  "drivers": [{
+        "id": "life360",
+        "name": {
+            "en": "Add my Life360 devices",
+            "nl": "Voeg mijn LIfe360 devices toe"
+        },
+        "images": {
+            "large": "drivers/life360/assets/images/large.jpg",
+            "small": "drivers/life360/assets/images/small.jpg"
+        },
+        "class": "other",
+        "capabilities": [
+            "measure_battery", "Distance","positionType", "batteryCharged", "location", "lastSeen"
+        ],
+        "pair": [
+          {
+            "id": "login_credentials",
+            "template": "login_credentials",
+            "options": {
+              "logo": "pair.svg"
+            }
+          },
+          {
+            "id": "list_devices",
+            "template": "list_devices",
+            "navigation": {
+              "next": "add_devices"
+            }
+          },
+          {
+            "id": "add_devices",
+            "template": "add_devices"
+          }
+        ],
+        "settings": [	
+          {	
+            "type": "group",	
+            "label": {	
+              "en": "Life360 Information",	
+              "nl": "Life360 informatie"	
+            },	
+            "children": [	
+              {	
+                "id": "username",	
+                "type": "text",	
+                "label": {	
+                  "en": "Username",	
+                  "nl": "Gebruikersnaam"	
+                },	
+                "value": ""	
+              },	
+              {	
+                "id": "password",	
+                "type": "password",	
+                "label": {	
+                  "en": "Password",	
+                  "nl": "Wachtwoord"	
+                },	
+                "value": "password"	
+              }	
+            ]	
+          }	
+        ]
+  }],
+  "flow": {
+    "triggers": [
+      {
+        "id": "device_entered",
+        "title": {
+          "en": "Device entered",
+          "nl": "Device kwam binnen"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+        "id": "device_left",
+        "title": {
+          "en": "Device left",
+          "nl": "Device ging weg"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+      "id": "triggerBattery",
+        "title": {
+           "en": "Battery is below a certain percentage",
+           "nl": "Accu beneden een bepaald percentage komt"
+        },
+        "tokens": [
+           {
+              "name": "batteryPercentage",
+              "type": "number",
+              "title": {
+                 "en": "Current battery percentage",
+                 "nl": "Huidige accu percentage"
+              },
+              "example": 25
+           }
+        ],
+        "args":[
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          },
+          {
+               "name": "batteryPercentage",
+               "type": "number",
+               "placeholder": {
+                  "en": "Battery percentage",
+                  "nl": "Accu percentage"
+               }
+           }
+        ]
+     },
+     {
+     "id": "BatteryCharging",
+       "title": {
+          "en": "Battery Charging",
+          "nl": "Accu word opgeladen"
+       },
+       "args":[
+         {
+           "name": "device",
+           "type": "device",
+           "filter": "driver_id=life360"
+         },
+         {
+              "name": "batteryPercentage",
+              "type": "number",
+              "placeholder": {
+                 "en": "Battery percentage",
+                 "nl": "Accu percentage"
+              }
+          }
+       ]
+    }
+
+    ],
+    "conditions": [
+        {
+          "id": "DeviceAtHome",
+          "title": {
+            "en": "Device is !{{home|away}}",
+            "nl": "Telefoon is !{{thuis|weg}}"
+          },
+          "args": [
+            {
+              "name": "device",
+              "type": "device",
+              "filter": "driver_id=life360"
+            }
+          ]
+        },
+        {
+          "id": "deviceDistance",
+          "title": {
+              "en": "Device !{{is|isn't}} within distance ",
+              "nl": "Device !{{is|is niet}} binnen de afstand "
+          },
+          "args": [{ 
+                "name": "device",
+                "type": "device",
+                "filter": "driver_id=life360"
+              },
+              {
+                  "name": "distance",
+                  "type": "number",
+                  "min": 0,
+                  "max": 100000000,
+                  "step": 1,
+                  "value": 100,
+                  "placeholder": {
+                      "en": "Distance in meters",
+                      "nl": "Afstand in meters"
+                  }
+              }
+          ]
+      }
+    ]
+  }
+}

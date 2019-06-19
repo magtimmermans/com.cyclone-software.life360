@@ -1,0 +1,17 @@
+{
+    "Charged"                       : "Vol",
+    "Unknown"                       : "-",
+    "NotCharging"                   : "Ontladen",
+    "Charging"                      : "Laden",
+    "device" : {
+        "connecting" : "Verbinden met LIfe360",
+        "sync_error" : "Error syncing"
+    },
+    "settings": {
+        "title": "Settings Pagina",
+        "FamilyTitle": "Life360 Instellingen",
+        "logTitle":"Logging",
+        "deletelogs" : "Verwijderen logs",
+        "getlogs" : "Logs ophalen"
+    }
+}

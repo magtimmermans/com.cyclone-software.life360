@@ -1,0 +1,17 @@
+{
+    "Charged"                       : "Charged",
+    "Unknown"                       : "-",
+    "NotCharging"                   : "NotCharging",
+    "Charging"                      : "Charging",
+    "device" : {
+        "connecting" : "Connecting to Life360",
+        "sync_error" : "Error during sync"
+    },
+    "settings": {
+        "title": "Settings Page",
+        "FamilyTitle": "Life360 Settings",
+        "logTitle":"Logging",
+        "deletelogs" : "Delete logs",
+        "getlogs" : "Get logs"
+    }
+}
