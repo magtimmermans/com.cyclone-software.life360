@@ -1,4 +1,4 @@
-# LIfe 360
+# Life 360
 
 This is an unoffical app that connects to the Life 360 App to read location information of your mobile device. This is a first beta version and it works untill Life 360 change/kill the interface.
 
