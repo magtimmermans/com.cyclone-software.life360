@@ -1,13 +1,13 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
     "en": "Life 360"
   },
   "brandColor": "#E8461D",
-  "homeyCommunityTopicId": 8016,
+  "homeyCommunityTopicId": 2050,
   "contributing": {
       "donate": {
           "paypal": {
