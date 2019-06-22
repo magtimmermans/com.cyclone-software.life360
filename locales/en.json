@@ -1,4 +1,6 @@
 {
+    "On"                            : "Yes",
+    "Off"                           : "No",
     "Charged"                       : "Charged",
     "Unknown"                       : "-",
     "NotCharging"                   : "NotCharging",

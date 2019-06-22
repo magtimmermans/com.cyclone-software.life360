@@ -4,10 +4,11 @@
 const Homey = require('homey');
 const util = require('util')
 
-
+const SPEED_FACTOR_MPH = 1.609344;
 
 const formatValue = t => Math.round(t.toFixed(1) * 10) / 10;
 const closeHome = 100;
+let i = 0;
 
 class Life360Dev extends Homey.Device {
 
@@ -15,6 +16,7 @@ class Life360Dev extends Homey.Device {
         this.log(`Init device ${this.getName()}`);
         this.presense = null;
         this.charging = null;
+        this.place = null;
 
 
 		let data = this.getData();
@@ -84,7 +86,16 @@ class Life360Dev extends Homey.Device {
             {
                 this.cloudData = clouddata;
 
+//                i=i+1;
                // this.log(clouddata);
+               // clouddata.location.speed=10.12325467468578975;
+            //    if ((i % 2)==0) clouddata.location.name='';
+            //    if ((i % 1)==0) clouddata.location.name='Home';
+            //    if ((i % 3)==0) clouddata.location.name='Work';
+
+              // console.log(clouddata.location.name);
+
+               clouddata.location.isDriving='0';
 
                 if (clouddata.location) {
                     let myLatitude = Homey.ManagerGeolocation.getLatitude();
@@ -97,8 +108,16 @@ class Life360Dev extends Homey.Device {
                     this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {
                         this.log(`Unable to set Distance: ${ e.message }`);
                     });
-                    this.setCapabilityValue("positionType", this.getState(clouddata.location.wifiState)).catch(e => {
-                        this.log(`Unable to set positionType: ${ e.message }`);
+                    this.setCapabilityValue("wifiState", Homey.__(this.getState(clouddata.location.wifiState))).catch(e => {
+                        this.log(`Unable to set wifiState: ${ e.message }`);
+                    });
+
+                    this.setCapabilityValue("driving", Homey.__(this.getState(clouddata.location.isDriving))).catch(e => {
+                        this.log(`Unable to set driving: ${ e.message }`);
+                    });
+
+                    this.setCapabilityValue("place", clouddata.location.name).catch(e => {
+                        this.log(`Unable to set place: ${ e.message }`);
                     });
         
                     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
@@ -110,19 +129,38 @@ class Life360Dev extends Homey.Device {
                         this.log(`Unable to set lastSeen: ${ e.message }`);
                     });
 
-                    this.setCapabilityValue("drvSpeed", (clouddata.location.speed>0 ? clouddata.location.speed : "-")).catch(e => {
+                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MPH;
+                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>0 ? formatValue(clouddata.location.speed).toString() : "-").catch(e => {
                         this.log(`Unable to set driveSpeed: ${ e.message }`);
                     });
+
+
+                    if (!this.place) this.place = clouddata.location.name;
+
+                    if (this.place != clouddata.location.name) {
+
+                        //console.log(`place:${this.place} locname:${clouddata.location.name}`)
+
+                        this.driver._triggers.trgDeviceArrivesPlace.trigger(this, {"place" : clouddata.location.name},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
+                            console.log(`err: ${err}`);
+                        });;
+
+                        this.driver._triggers.trgDeviceLeftPlace.trigger(this, {"place" :  this.place},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
+                            console.log(`err: ${err}`);
+                        });;
+
+                        this.place = clouddata.location.name;
+                    }
+
+
                 }
-
-
 
 
                 let batt = Math.round(clouddata.location.battery);
                 let batteryStatus = "Charged";
                 //console.log(`batt:${batt}, batteryPercentage ${this.batteryPercentage}`);
                 if (batt<100) {
-                    (batt<=this.batteryPercentage) ? batteryStatus="NotCharging" : batteryStatus="Charging";
+                    (clouddata.location.charge=='1') ? batteryStatus="Charging" : batteryStatus="NotCharging";
                 }
 
                 let charging = (batteryStatus === "Charging") || (batteryStatus==="Charged");
@@ -164,7 +202,7 @@ class Life360Dev extends Homey.Device {
 	}
 
     getState(state){
-        return (state == '1') ? "WiFi" : "Non WiFi";
+        return (state == '0') ? "Off" : "On";
     }
 
     setPresence(distance){

@@ -1,6 +1,6 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -46,18 +46,29 @@
           "uiComponent": "sensor",
           "icon": "./drivers/life360/assets/distance.svg"
       },
-      "positionType": {
+      "wifiState": {
         "type": "string",
         "title": {
-            "en": "Position Type",
-            "nl": "Locatie op basis van"
+            "en": "Wifi State",
+            "nl": "Wifi Status"
         },
         "getable": true,
         "setable": false,
         "preventInsights": true,
-        "icon": "./drivers/life360/assets/location.svg"
+        "icon": "./drivers/life360/assets/wifi.svg"
     },
-    "batteryCharged": {
+    "place": {
+      "type": "string",
+      "title": {
+          "en": "Place",
+          "nl": "Plaats"
+      },
+      "getable": true,
+      "setable": false,
+      "preventInsights": true,
+      "icon": "./drivers/life360/assets/location.svg"
+      },
+      "batteryCharged": {
       "type": "string",
       "title": {
           "en": "Battery status",
@@ -80,6 +91,18 @@
       "insights": true,
       "uiComponent": "sensor",
       "icon": "./drivers/life360/assets/speedometer.svg"
+    },
+    "driving": {
+      "type": "string",
+      "title": {
+          "en": "Drive",
+          "nl": "Rijden"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/car.svg"
     },
     "lastSeen": {
       "type": "string",
@@ -105,7 +128,7 @@
         },
         "class": "other",
         "capabilities": [
-            "measure_battery", "Distance","positionType", "batteryCharged", "drvSpeed", "lastSeen"
+            "measure_battery", "Distance","wifiState","place", "batteryCharged", "drvSpeed","driving", "lastSeen"
         ],
         "pair": [
           {
@@ -152,6 +175,64 @@
             "name": "device",
             "type": "device",
             "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+        "id": "device_left_place",
+        "title": {
+          "en": "Device left place",
+          "nl": "Device verlaat deze plek"
+        },
+        "tokens": [{
+          "name": "place",
+          "title": {
+              "en": "Place",
+              "nl": "Plaats"
+          }
+        }],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          },
+          {
+            "name": "places",
+            "type": "autocomplete",
+            "placeholder": {
+                "en": "Place",
+                "nl": "Plaats"
+            }
+          }
+        ]
+      },
+      {
+        "id": "device_arrives_place",
+        "title": {
+          "en": "Device arrives place",
+          "nl": "Device komt aan op deze plek"
+        },
+        "tokens": [{
+          "name": "place",
+          "title": {
+              "en": "Place",
+              "nl": "Plaats"
+          }
+        }],
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          },
+          {
+            "name": "places",
+            "type": "autocomplete",
+            "placeholder": {
+                "en": "Place",
+                "nl": "Plaats"
+            }
           }
         ]
       },

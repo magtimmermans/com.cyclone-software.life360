@@ -13,6 +13,10 @@ class FamilyIPhoneDriver extends Homey.Driver {
 
         this.registerFlowCards();
 
+        this.placeTokens = [];
+        this.session = {};// null;
+
+
         this.settings = Homey.ManagerSettings.get('settings');
 
         Homey.ManagerSettings.on('set', (key) => {  
@@ -36,6 +40,14 @@ class FamilyIPhoneDriver extends Homey.Driver {
             };
         }
 
+
+        console.log('start session');
+        await this.getSession().then(s =>{
+            console.log('ok session');
+            console.log(s);
+            this.session=s;
+        });
+        console.log('end session');
 
         // Start syncing periodically.
         this.shouldSync = true;
@@ -62,10 +74,9 @@ class FamilyIPhoneDriver extends Homey.Driver {
         this.isSyncing = true;
         this.log(`syncing (${synctime}min)`);
         try {
-           await this.updateStatus().then(d => {
-               this.log("update ok");
-           }).catch(e => {
-             this.log(`update error: ${e}`);
+           await this.updateStatus().then(d => {this.log("update ok");}).catch(e => {this.log(`update error: ${e}`);});
+           await this.updatePlaces().then(t => {
+            this.placeTokens = t;
            });
         } catch(e) {
           this.log('error syncing', e);
@@ -85,7 +96,8 @@ class FamilyIPhoneDriver extends Homey.Driver {
         return new Promise(function(resolve, reject) {
          try {
                   //  can I reuse the session/?? Check!!      
-                  life360.authenticate(me.settings.username, me.settings.password).then(session => {
+                  //life360.authenticate(me.settings.username, me.settings.password).then(session => {
+                    me.getSession().then(session => {
                        life360.circles(session).then(circles =>{
                          circles.forEach(function (objCircle) {
                             life360.circle(session, objCircle.id).then(circle => {
@@ -111,6 +123,41 @@ class FamilyIPhoneDriver extends Homey.Driver {
             }
         })
     }
+
+    async updatePlaces() {
+        var me=this;
+        return new Promise(function(resolve, reject) {
+         try {
+                 let tokens = [];
+                  //  can I reuse the session/?? Check!!      
+                  //life360.authenticate(me.settings.username, me.settings.password).then(session => {
+                  me.getSession().then(session => {
+                    life360.circles(session).then(async(circles) => {
+                        if (circles.length == 0) {
+                            callback(new Error("No circles in your Life360."));
+                        }        
+                        await asyncForEach(circles,async(objCircle) => {
+                            const places = await life360.places(session, objCircle.id).then(places => {
+                                return places.map(p => ({
+                                    id: p.id,
+                                    name: p.name,
+                                    radius: Number(p.radius)
+                                }))
+                            });
+                            tokens = tokens.concat(places);    
+                        });
+                        resolve(tokens);
+                    });
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    reject(err);  
+                  });
+            } catch (error) {
+                reject(error);
+            }
+        })
+    }
  
     registerFlowCards() {
         this._triggers = {
@@ -118,8 +165,44 @@ class FamilyIPhoneDriver extends Homey.Driver {
            trgDeviceLeft : new Homey.FlowCardTriggerDevice("device_left").register(),
            trgDeviceBattery : new Homey.FlowCardTriggerDevice("triggerBattery").register(),
            trgDeviceCharging : new Homey.FlowCardTriggerDevice("BatteryCharging").register(),
+           trgDeviceLeftPlace : new Homey.FlowCardTriggerDevice("device_left_place").register(),
+           trgDeviceArrivesPlace : new Homey.FlowCardTriggerDevice("device_arrives_place").register(),
+
+           
         }
-    
+
+        this._triggers.trgDeviceLeftPlace.getArgument('places').registerAutocompleteListener(( query, args ) => {
+            let items = this.placeTokens.map(p => ({
+                id: p.id,
+                name : p.name
+            }))
+            return Promise.resolve(items);
+         })
+
+         this._triggers.trgDeviceLeftPlace.registerRunListener(( args, state ) => {
+            // console.log(`left place ${args.places.name} - ${state.places} (${state.oldplace})`);
+
+            // If true, this flow should run
+            let result = (args.places.name === state.oldplace) && (args.places.name != state.places)    
+            //console.log(result);
+
+            return Promise.resolve(result);
+          })
+
+         this._triggers.trgDeviceArrivesPlace.getArgument('places').registerAutocompleteListener(( query, args ) => {
+            let items = this.placeTokens.map(p => ({
+                id: p.id,
+                name : p.name
+            }))
+            return Promise.resolve(items);
+         })
+
+         this._triggers.trgDeviceArrivesPlace.registerRunListener(( args, state ) => {
+            // If true, this flow should run
+            //console.log(`Arrives place ${args.places.name} - ${state.places}`);
+            return Promise.resolve(args.places.name == state.places);
+          })
+
         this._conditions = {
           cndDeviceAtHome : new Homey.FlowCardCondition('DeviceAtHome').register().registerRunListener(( args, state ) => {
             if (args.device.hasOwnProperty("presense")) {
@@ -146,6 +229,32 @@ class FamilyIPhoneDriver extends Homey.Driver {
             return Promise.resolve(true);
          });
     }
+
+    async getSession() {
+        try {
+            if (!this.session)
+            {
+                console.log('new session');
+                return await life360.authenticate(this.settings.username, this.settings.password);
+            }
+            else
+            {
+                // testing session with gettings Circles
+                return await life360.circles(this.session).then(async(c) => {
+                    if (!c) {
+                        this.session =  await life360.authenticate(this.settings.username, this.settings.password);  
+                        console.log('reactived session')
+                        return this.session;
+                    } else console.log(`reuse session ${c}`);
+                    return this.session;       
+                }); 
+            }           
+        } catch (error) {
+            console.log(error);
+            return await life360.authenticate(this.settings.username, this.settings.password);
+        }  
+    }
+
 
     onPair (socket) {
         this.log('Paring');

@@ -1,4 +1,6 @@
 {
+    "On"                            : "Ja",
+    "Off"                           : "Nee",
     "Charged"                       : "Vol",
     "Unknown"                       : "-",
     "NotCharging"                   : "Ontladen",
