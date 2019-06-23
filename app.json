@@ -1,6 +1,6 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -92,6 +92,18 @@
       "uiComponent": "sensor",
       "icon": "./drivers/life360/assets/speedometer.svg"
     },
+    "accuracy": {
+      "type": "string",
+      "title": {
+          "en": "Accuracy GPS",
+          "nl": "Nauwkeurigheid GPS"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/accuracy.svg"
+    },
     "driving": {
       "type": "string",
       "title": {
@@ -103,6 +115,18 @@
       "insights": true,
       "uiComponent": "sensor",
       "icon": "./drivers/life360/assets/car.svg"
+    },
+    "transit": {
+      "type": "string",
+      "title": {
+          "en": "Transit",
+          "nl": "Onderweg"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/transit.svg"
     },
     "lastSeen": {
       "type": "string",
@@ -128,7 +152,7 @@
         },
         "class": "other",
         "capabilities": [
-            "measure_battery", "Distance","wifiState","place", "batteryCharged", "drvSpeed","driving", "lastSeen"
+            "measure_battery", "Distance","accuracy","wifiState","place", "batteryCharged", "drvSpeed","driving","transit", "lastSeen"
         ],
         "pair": [
           {

@@ -4,7 +4,7 @@
 const Homey = require('homey');
 const util = require('util')
 
-const SPEED_FACTOR_MPH = 1.609344;
+const SPEED_FACTOR_MPH = 1.609344 * 2.25;
 
 const formatValue = t => Math.round(t.toFixed(1) * 10) / 10;
 const closeHome = 100;
@@ -79,7 +79,7 @@ class Life360Dev extends Homey.Device {
 
     updateCloudData(clouddata) {
         this.log(`Updating device: ${clouddata.firstName}`);
-        //console.log(util.inspect(clouddata, false, null, true /* enable colors */))
+        console.log(util.inspect(clouddata, false, null, true /* enable colors */))
 
         try {
             if (clouddata)
@@ -95,11 +95,16 @@ class Life360Dev extends Homey.Device {
 
               // console.log(clouddata.location.name);
 
-               clouddata.location.isDriving='0';
+             // clouddata.location.isDriving='1';
+
 
                 if (clouddata.location) {
                     let myLatitude = Homey.ManagerGeolocation.getLatitude();
                     let myLongitude = Homey.ManagerGeolocation.getLongitude();
+
+                    let isDriving = !!+clouddata.location.isDriving;
+                    let WiFiState = !!+clouddata.location.wifiState;
+                    let Moving = !!+clouddata.location.inTransit;
 
                     this.distance = this.FGCD(myLongitude,myLatitude,clouddata.location.longitude, clouddata.location.latitude);
                     this.setPresence(this.distance);
@@ -108,17 +113,26 @@ class Life360Dev extends Homey.Device {
                     this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {
                         this.log(`Unable to set Distance: ${ e.message }`);
                     });
-                    this.setCapabilityValue("wifiState", Homey.__(this.getState(clouddata.location.wifiState))).catch(e => {
+                    this.setCapabilityValue("wifiState", Homey.__(this.getState(WiFiState))).catch(e => {
                         this.log(`Unable to set wifiState: ${ e.message }`);
                     });
 
-                    this.setCapabilityValue("driving", Homey.__(this.getState(clouddata.location.isDriving))).catch(e => {
+                    this.setCapabilityValue("driving", Homey.__(this.getState(isDriving))).catch(e => {
                         this.log(`Unable to set driving: ${ e.message }`);
+                    });
+
+                    this.setCapabilityValue("transit", Homey.__(this.getState(Moving))).catch(e => {
+                        this.log(`Unable to set transit: ${ e.message }`);
                     });
 
                     this.setCapabilityValue("place", clouddata.location.name).catch(e => {
                         this.log(`Unable to set place: ${ e.message }`);
                     });
+
+                    this.setCapabilityValue("accuracy", clouddata.location.accuracy).catch(e => {
+                        this.log(`Unable to set accuracy: ${ e.message }`);
+                    });
+                    
         
                     var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
                     d.setUTCSeconds(clouddata.location.timestamp);
@@ -202,7 +216,7 @@ class Life360Dev extends Homey.Device {
 	}
 
     getState(state){
-        return (state == '0') ? "Off" : "On";
+        return (state === false) ? "Off" : "On";
     }
 
     setPresence(distance){
