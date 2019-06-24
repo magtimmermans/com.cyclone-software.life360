@@ -4,7 +4,7 @@
 const Homey = require('homey');
 const util = require('util')
 
-const SPEED_FACTOR_MPH = 1.609344 * 2.25;
+const SPEED_FACTOR_MS = 3.6;  // m/s => km/h
 
 const formatValue = t => Math.round(t.toFixed(1) * 10) / 10;
 const closeHome = 100;
@@ -143,7 +143,7 @@ class Life360Dev extends Homey.Device {
                         this.log(`Unable to set lastSeen: ${ e.message }`);
                     });
 
-                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MPH;
+                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
                     this.setCapabilityValue("drvSpeed", clouddata.location.speed>0 ? formatValue(clouddata.location.speed).toString() : "-").catch(e => {
                         this.log(`Unable to set driveSpeed: ${ e.message }`);
                     });
