@@ -79,7 +79,7 @@ class Life360Dev extends Homey.Device {
 
     updateCloudData(clouddata) {
         this.log(`Updating device: ${clouddata.firstName}`);
-        console.log(util.inspect(clouddata, false, null, true /* enable colors */))
+        //console.log(util.inspect(clouddata, false, null, true /* enable colors */))
 
         try {
             if (clouddata)
@@ -144,7 +144,7 @@ class Life360Dev extends Homey.Device {
                     });
 
                     clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
-                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>0 ? formatValue(clouddata.location.speed).toString() : "-").catch(e => {
+                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>1 ? Math.round(clouddata.location.speed) : 0).catch(e => {
                         this.log(`Unable to set driveSpeed: ${ e.message }`);
                     });
 
@@ -175,6 +175,11 @@ class Life360Dev extends Homey.Device {
                 //console.log(`batt:${batt}, batteryPercentage ${this.batteryPercentage}`);
                 if (batt<100) {
                     (clouddata.location.charge=='1') ? batteryStatus="Charging" : batteryStatus="NotCharging";
+                } else {
+                    if (this.batteryPercentage!=batt)
+                    {
+                        this.driver._triggers.trgBatteryCharged.trigger(this, {}, {}).catch(this.error );
+                    }
                 }
 
                 let charging = (batteryStatus === "Charging") || (batteryStatus==="Charged");
@@ -198,11 +203,14 @@ class Life360Dev extends Homey.Device {
 
 
 
+
                 this.batteryPercentage = Math.round(clouddata.location.battery);
 
                 //if (this.getCapabilityValue('measure_battery') !== this.batteryPercentage) { 
                     this.driver._triggers.trgDeviceBattery.trigger(this, { "batteryPercentage": this.batteryPercentage }, { "batteryPercentage": this.batteryPercentage }).catch(this.error );
                 //}
+
+
 
 
 				this.setCapabilityValue('measure_battery', this.batteryPercentage).catch((e) => {

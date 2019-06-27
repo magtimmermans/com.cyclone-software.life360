@@ -1,6 +1,6 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -81,7 +81,7 @@
       "icon": "./drivers/life360/assets/battery.svg"
     },
     "drvSpeed": {
-      "type": "string",
+      "type": "number",
       "title": {
           "en": "Speed",
           "nl": "Snelheid"
@@ -90,10 +90,11 @@
       "setable": false,
       "insights": true,
       "uiComponent": "sensor",
+      "units" : "km/h",
       "icon": "./drivers/life360/assets/speedometer.svg"
     },
     "accuracy": {
-      "type": "string",
+      "type": "number",
       "title": {
           "en": "Accuracy GPS",
           "nl": "Nauwkeurigheid GPS"
@@ -293,28 +294,19 @@
         ]
      },
      {
-     "id": "BatteryCharging",
+     "id": "BatteryCharged",
        "title": {
-          "en": "Battery Charging",
-          "nl": "Accu word opgeladen"
+          "en": "Battery Charged",
+          "nl": "Accu is opgeladen"
        },
        "args":[
          {
            "name": "device",
            "type": "device",
            "filter": "driver_id=life360"
-         },
-         {
-              "name": "batteryPercentage",
-              "type": "number",
-              "placeholder": {
-                 "en": "Battery percentage",
-                 "nl": "Accu percentage"
-              }
-          }
+         }
        ]
     }
-
     ],
     "conditions": [
         {

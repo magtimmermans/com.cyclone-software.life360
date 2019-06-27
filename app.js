@@ -13,7 +13,7 @@ class Life360App extends Homey.App {
 		// 	console.log(error);
 		// }
 
-		this.logger = new Logger('log', 200);
+		this.logger = new Logger('log', 50);
 
 		// global crash handling
 		process.on('uncaughtException', (err) => {

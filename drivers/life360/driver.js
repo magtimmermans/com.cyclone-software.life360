@@ -167,8 +167,7 @@ class FamilyIPhoneDriver extends Homey.Driver {
            trgDeviceCharging : new Homey.FlowCardTriggerDevice("BatteryCharging").register(),
            trgDeviceLeftPlace : new Homey.FlowCardTriggerDevice("device_left_place").register(),
            trgDeviceArrivesPlace : new Homey.FlowCardTriggerDevice("device_arrives_place").register(),
-
-           
+           trgBatteryCharged : new Homey.FlowCardTriggerDevice("BatteryCharged").register(),         
         }
 
         this._triggers.trgDeviceLeftPlace.getArgument('places').registerAutocompleteListener(( query, args ) => {
