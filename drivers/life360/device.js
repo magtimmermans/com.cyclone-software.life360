@@ -7,6 +7,7 @@ const util = require('util')
 const SPEED_FACTOR_MS = 3.6;  // m/s => km/h
 
 const formatValue = t => Math.round(t.toFixed(1) * 10) / 10;
+const formatValue3 = t => Math.round(t.toFixed(1) * 1000) / 1000;
 const closeHome = 100;
 let i = 0;
 
@@ -70,7 +71,7 @@ class Life360Dev extends Homey.Device {
     }
 
     onAdded() {
-        this.log(`New device added: ${this.getName()} - ${this.getData().ip} `);
+        this.log(`New device added: ${this.getName()} - ${this.getData().id} `);
     }
 
     onDeleted() {
@@ -86,14 +87,14 @@ class Life360Dev extends Homey.Device {
             {
                 this.cloudData = clouddata;
 
-//                i=i+1;
+               // i=i+1;
                // this.log(clouddata);
                // clouddata.location.speed=10.12325467468578975;
-            //    if ((i % 2)==0) clouddata.location.name='';
-            //    if ((i % 1)==0) clouddata.location.name='Home';
+            //    if ((i % 1)==0) clouddata.location.name='';
+            //    if ((i % 2)==0) clouddata.location.name='Home';
             //    if ((i % 3)==0) clouddata.location.name='Work';
 
-              // console.log(clouddata.location.name);
+            //   console.log(clouddata.location.name);
 
              // clouddata.location.isDriving='1';
 
@@ -106,6 +107,11 @@ class Life360Dev extends Homey.Device {
                     let WiFiState = !!+clouddata.location.wifiState;
                     let Moving = !!+clouddata.location.inTransit;
 
+                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
+
+                    // temporary fix until API shows isDriving mode
+                    if (clouddata.location.speed>20)  isDriving=true; 
+
                     this.distance = this.FGCD(myLongitude,myLatitude,clouddata.location.longitude, clouddata.location.latitude);
                     this.setPresence(this.distance);
                     //console.log(this.distance);
@@ -113,6 +119,11 @@ class Life360Dev extends Homey.Device {
                     this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {
                         this.log(`Unable to set Distance: ${ e.message }`);
                     });
+
+                    this.setCapabilityValue("DistanceKM", formatValue3(this.distance/1000)).catch(e => {
+                        this.log(`Unable to set DistanceKM: ${ e.message }`);
+                    });
+
                     this.setCapabilityValue("wifiState", Homey.__(this.getState(WiFiState))).catch(e => {
                         this.log(`Unable to set wifiState: ${ e.message }`);
                     });
@@ -129,7 +140,7 @@ class Life360Dev extends Homey.Device {
                         this.log(`Unable to set place: ${ e.message }`);
                     });
 
-                    this.setCapabilityValue("accuracy", clouddata.location.accuracy).catch(e => {
+                    this.setCapabilityValue("accuracy", parseInt(clouddata.location.accuracy)).catch(e => {
                         this.log(`Unable to set accuracy: ${ e.message }`);
                     });
                     
@@ -143,17 +154,17 @@ class Life360Dev extends Homey.Device {
                         this.log(`Unable to set lastSeen: ${ e.message }`);
                     });
 
-                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
+                    
                     this.setCapabilityValue("drvSpeed", clouddata.location.speed>1 ? Math.round(clouddata.location.speed) : 0).catch(e => {
                         this.log(`Unable to set driveSpeed: ${ e.message }`);
                     });
 
 
-                    if (!this.place) this.place = clouddata.location.name;
+                    if (this.place == null) this.place = clouddata.location.name;
 
                     if (this.place != clouddata.location.name) {
 
-                        //console.log(`place:${this.place} locname:${clouddata.location.name}`)
+                       // console.log(`place:${this.place} -> locname:${clouddata.location.name}`)
 
                         this.driver._triggers.trgDeviceArrivesPlace.trigger(this, {"place" : clouddata.location.name},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
                             console.log(`err: ${err}`);
@@ -163,7 +174,6 @@ class Life360Dev extends Homey.Device {
                             console.log(`err: ${err}`);
                         });;
 
-                        this.place = clouddata.location.name;
                     }
 
 
@@ -202,15 +212,12 @@ class Life360Dev extends Homey.Device {
 				});
 
 
-
-
                 this.batteryPercentage = Math.round(clouddata.location.battery);
+                this.place = clouddata.location.name;
 
                 //if (this.getCapabilityValue('measure_battery') !== this.batteryPercentage) { 
                     this.driver._triggers.trgDeviceBattery.trigger(this, { "batteryPercentage": this.batteryPercentage }, { "batteryPercentage": this.batteryPercentage }).catch(this.error );
                 //}
-
-
 
 
 				this.setCapabilityValue('measure_battery', this.batteryPercentage).catch((e) => {
@@ -235,7 +242,7 @@ class Life360Dev extends Homey.Device {
 
         let newPresence = (distance<range);
 
-        this.log(`Name: ${this.getName()}, Presence:${this.presence}, new Presence: ${newPresence}, range:${range},distance ${distance}`);
+        this.log(`Name: ${this.getName()}, Presence:${this.presence}, new Presence: ${newPresence}, range:${range},distance ${formatValue(distance)}`);
 
 
         if (this.presence === undefined) {

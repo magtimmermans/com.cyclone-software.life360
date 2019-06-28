@@ -4,10 +4,10 @@ const Homey = require('homey');
 const life360 = require('life360-hack');
 const MINUTE = 60000;
 
- 
 
-class FamilyIPhoneDriver extends Homey.Driver {
+class Life360Driver extends Homey.Driver {
 
+  
     async onInit() { 
         this.log('Init driver');
 
@@ -15,7 +15,6 @@ class FamilyIPhoneDriver extends Homey.Driver {
 
         this.placeTokens = [];
         this.session = {};// null;
-
 
         this.settings = Homey.ManagerSettings.get('settings');
 
@@ -39,7 +38,6 @@ class FamilyIPhoneDriver extends Homey.Driver {
                 "password" : ""
             };
         }
-
 
         console.log('start session');
         await this.getSession().then(s =>{
@@ -167,7 +165,7 @@ class FamilyIPhoneDriver extends Homey.Driver {
            trgDeviceCharging : new Homey.FlowCardTriggerDevice("BatteryCharging").register(),
            trgDeviceLeftPlace : new Homey.FlowCardTriggerDevice("device_left_place").register(),
            trgDeviceArrivesPlace : new Homey.FlowCardTriggerDevice("device_arrives_place").register(),
-           trgBatteryCharged : new Homey.FlowCardTriggerDevice("BatteryCharged").register(),         
+           trgBatteryCharged : new Homey.FlowCardTriggerDevice("triggerBatteryCharged").register(),         
         }
 
         this._triggers.trgDeviceLeftPlace.getArgument('places').registerAutocompleteListener(( query, args ) => {
@@ -233,7 +231,7 @@ class FamilyIPhoneDriver extends Homey.Driver {
         try {
             if (!this.session)
             {
-                console.log('new session');
+                this.log('new session');
                 return await life360.authenticate(this.settings.username, this.settings.password);
             }
             else
@@ -242,9 +240,9 @@ class FamilyIPhoneDriver extends Homey.Driver {
                 return await life360.circles(this.session).then(async(c) => {
                     if (!c) {
                         this.session =  await life360.authenticate(this.settings.username, this.settings.password);  
-                        console.log('reactived session')
+                        this.log('reactived session')
                         return this.session;
-                    } else console.log(`reuse session ${c}`);
+                    } //else //console.log(`reuse session ${c}`);
                     return this.session;       
                 }); 
             }           
@@ -253,7 +251,6 @@ class FamilyIPhoneDriver extends Homey.Driver {
             return await life360.authenticate(this.settings.username, this.settings.password);
         }  
     }
-
 
     onPair (socket) {
         this.log('Paring');
@@ -314,4 +311,4 @@ const asyncForEach = async (array, callback) => {
 }
 
 
-module.exports = FamilyIPhoneDriver;
+module.exports = Life360Driver;

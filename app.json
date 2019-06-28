@@ -46,6 +46,17 @@
           "uiComponent": "sensor",
           "icon": "./drivers/life360/assets/distance.svg"
       },
+      "DistanceKM": {
+        "type": "number",
+        "title": {
+            "en": "Distance from Homey",
+            "nl": "Afstand tot Homey"
+        },
+        "getable": true,
+        "setable": false,
+        "units": "KM",
+        "uiComponent": null
+    },
       "wifiState": {
         "type": "string",
         "title": {
@@ -152,7 +163,7 @@
         },
         "class": "other",
         "capabilities": [
-            "measure_battery", "Distance","accuracy","wifiState","place", "batteryCharged", "drvSpeed","driving","transit", "lastSeen"
+            "measure_battery", "Distance","DistanceKM","accuracy","wifiState","place", "batteryCharged", "drvSpeed","driving","transit", "lastSeen"
         ],
         "pair": [
           {
@@ -294,7 +305,21 @@
         ]
      },
      {
-     "id": "BatteryCharged",
+      "id": "BatteryCharging",
+        "title": {
+           "en": "Battery Charging",
+           "nl": "Accu word opgeladen"
+        },
+        "args":[
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+     },
+     {
+     "id": "triggerBatteryCharged",
        "title": {
           "en": "Battery Charged",
           "nl": "Accu is opgeladen"
