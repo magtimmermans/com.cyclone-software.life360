@@ -65,17 +65,19 @@ class Life360Driver extends Homey.Driver {
     async sync() {
         if (! this.shouldSync || this.isSyncing) return;
 
-        let synctime  = 1;
-        if (this.settings)
-            synctime = this.settings.synctime;
-
         this.isSyncing = true;
-        this.log(`syncing (${synctime}min)`);
+        let synctime  = 1;
+ 
         try {
-           await this.updateStatus().then(d => {this.log("update ok");}).catch(e => {this.log(`update error: ${e}`);});
-           await this.updatePlaces().then(t => {
-            this.placeTokens = t;
-           });
+            if (this.settings)
+                synctime = this.settings.synctime;
+
+             this.log(`syncing (${synctime}min)`);
+
+            await this.updateStatus().then(d => {this.log("update ok");}).catch(e => {this.log(`update error: ${e}`);});
+            await this.updatePlaces().then(t => {
+                this.placeTokens = t;
+            }).catch(e => {this.log(`update place error: ${e}`);});
         } catch(e) {
           this.log('error syncing', e);
         }
@@ -99,12 +101,12 @@ class Life360Driver extends Homey.Driver {
                        life360.circles(session).then(circles =>{
                          circles.forEach(function (objCircle) {
                             life360.circle(session, objCircle.id).then(circle => {
-                                circle.members.forEach(member => {
+                                circle.members.forEach(async(member) => {
                                     // update devices
                                     let homeyDevice = me.getDevice({id: member.id});
                             		if (homeyDevice instanceof Homey.Device) {
                                             // update device
-                                            homeyDevice.updateCloudData(member);
+                                            await homeyDevice.updateCloudData(member);
                                     } 
                                 })
                             });    

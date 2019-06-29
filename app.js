@@ -17,7 +17,7 @@ class Life360App extends Homey.App {
 
 		// global crash handling
 		process.on('uncaughtException', (err) => {
-			this.error(`Caught exception: ${err}\n`);
+			this.error(`UnCaught exception: ${err}\n`);
 		});
 
 		process.on('unhandledRejection', (reason, p) => {

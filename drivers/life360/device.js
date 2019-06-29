@@ -78,156 +78,123 @@ class Life360Dev extends Homey.Device {
         this.log('device deleted');
     }
 
-    updateCloudData(clouddata) {
+    async updateCloudData(clouddata) {
         this.log(`Updating device: ${clouddata.firstName}`);
         //console.log(util.inspect(clouddata, false, null, true /* enable colors */))
 
-        try {
-            if (clouddata)
-            {
-                this.cloudData = clouddata;
+        if (clouddata)
+        {
+            this.cloudData = clouddata;
 
-               // i=i+1;
-               // this.log(clouddata);
-               // clouddata.location.speed=10.12325467468578975;
-            //    if ((i % 1)==0) clouddata.location.name='';
-            //    if ((i % 2)==0) clouddata.location.name='Home';
-            //    if ((i % 3)==0) clouddata.location.name='Work';
+        //     i=i+1;
+        //     this.log(i);
+        //     // clouddata.location.speed=10.12325467468578975;
+        //     if ((i % 1)==0) clouddata.location.name='';
+        // //    if ((i % 2)==0) clouddata.location.name='Home';
+        //     if ((i % 3)==0) clouddata.location.name='Home';
 
-            //   console.log(clouddata.location.name);
+        //     console.log(clouddata.location.name);
 
-             // clouddata.location.isDriving='1';
-
-
-                if (clouddata.location) {
-                    let myLatitude = Homey.ManagerGeolocation.getLatitude();
-                    let myLongitude = Homey.ManagerGeolocation.getLongitude();
-
-                    let isDriving = !!+clouddata.location.isDriving;
-                    let WiFiState = !!+clouddata.location.wifiState;
-                    let Moving = !!+clouddata.location.inTransit;
-
-                    clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
-
-                    // temporary fix until API shows isDriving mode
-                    if (clouddata.location.speed>20)  isDriving=true; 
-
-                    this.distance = this.FGCD(myLongitude,myLatitude,clouddata.location.longitude, clouddata.location.latitude);
-                    this.setPresence(this.distance);
-                    //console.log(this.distance);
-
-                    this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {
-                        this.log(`Unable to set Distance: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("DistanceKM", formatValue3(this.distance/1000)).catch(e => {
-                        this.log(`Unable to set DistanceKM: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("wifiState", Homey.__(this.getState(WiFiState))).catch(e => {
-                        this.log(`Unable to set wifiState: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("driving", Homey.__(this.getState(isDriving))).catch(e => {
-                        this.log(`Unable to set driving: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("transit", Homey.__(this.getState(Moving))).catch(e => {
-                        this.log(`Unable to set transit: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("place", clouddata.location.name).catch(e => {
-                        this.log(`Unable to set place: ${ e.message }`);
-                    });
-
-                    this.setCapabilityValue("accuracy", parseInt(clouddata.location.accuracy)).catch(e => {
-                        this.log(`Unable to set accuracy: ${ e.message }`);
-                    });
-                    
-        
-                    var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
-                    d.setUTCSeconds(clouddata.location.timestamp);
-        
-                    let lastSeen = this.toLocalTime(d).toISOString().replace('T', ' ').substr(0, 19)
-        
-                    this.setCapabilityValue("lastSeen", lastSeen).catch(e => {
-                        this.log(`Unable to set lastSeen: ${ e.message }`);
-                    });
-
-                    
-                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>1 ? Math.round(clouddata.location.speed) : 0).catch(e => {
-                        this.log(`Unable to set driveSpeed: ${ e.message }`);
-                    });
+        //     // clouddata.location.isDriving='1';
 
 
-                    if (this.place == null) this.place = clouddata.location.name;
+            if (clouddata.location) {
+                let myLatitude = Homey.ManagerGeolocation.getLatitude();
+                let myLongitude = Homey.ManagerGeolocation.getLongitude();
 
-                    if (this.place != clouddata.location.name) {
+                let isDriving = !!+clouddata.location.isDriving;
+                let WiFiState = !!+clouddata.location.wifiState;
+                let Moving = !!+clouddata.location.inTransit;
 
-                       // console.log(`place:${this.place} -> locname:${clouddata.location.name}`)
+                clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
 
-                        this.driver._triggers.trgDeviceArrivesPlace.trigger(this, {"place" : clouddata.location.name},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
-                            console.log(`err: ${err}`);
-                        });;
+                // temporary fix until API shows isDriving mode
+                if (clouddata.location.speed>20)  isDriving=true; 
 
-                        this.driver._triggers.trgDeviceLeftPlace.trigger(this, {"place" :  this.place},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
-                            console.log(`err: ${err}`);
-                        });;
+                this.distance = this.FGCD(myLongitude,myLatitude,clouddata.location.longitude, clouddata.location.latitude);
+                this.setPresence(this.distance);
+                //console.log(this.distance);
 
-                    }
+                var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+                d.setUTCSeconds(clouddata.location.timestamp);
+    
+                let lastSeen = this.toLocalTime(d).toISOString().replace('T', ' ').substr(0, 19)
+    
 
+                await Promise.all([
+                    this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {this.log(`Unable to set Distance: ${ e.message }`);}),
+                    this.setCapabilityValue("DistanceKM", formatValue3(this.distance/1000)).catch(e => {this.log(`Unable to set DistanceKM: ${ e.message }`);}),
+                    this.setCapabilityValue("wifiState", Homey.__(this.getState(WiFiState))).catch(e => {this.log(`Unable to set wifiState: ${ e.message }`);}),
+                    this.setCapabilityValue("driving", Homey.__(this.getState(isDriving))).catch(e => {this.log(`Unable to set driving: ${ e.message }`);}),
+                    this.setCapabilityValue("transit", Homey.__(this.getState(Moving))).catch(e => {this.log(`Unable to set transit: ${ e.message }`);}),
+                    this.setCapabilityValue("place", clouddata.location.name).catch(e => {this.log(`Unable to set place: ${ e.message }`);}),
+                    this.setCapabilityValue("accuracy", parseInt(clouddata.location.accuracy)).catch(e => {this.log(`Unable to set accuracy: ${ e.message }`);}),
+                    this.setCapabilityValue("lastSeen", lastSeen).catch(e => {this.log(`Unable to set lastSeen: ${ e.message }`);}),
+                    this.setCapabilityValue("drvSpeed", clouddata.location.speed>1 ? Math.round(clouddata.location.speed) : 0).catch(e => {this.log(`Unable to set driveSpeed: ${ e.message }`);}),
+                ]);
+
+                if (this.place == null) this.place = clouddata.location.name;
+
+                if (this.place != clouddata.location.name) {
+
+                    console.log(`place:${this.place} -> locname:${clouddata.location.name}`)
+
+                    this.driver._triggers.trgDeviceArrivesPlace.trigger(this, {"place" : clouddata.location.name},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
+                        console.log(`err: ${err}`);
+                    });;
+
+                    this.driver._triggers.trgDeviceLeftPlace.trigger(this, {"place" :  this.place},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
+                        console.log(`err: ${err}`);
+                    });;
 
                 }
 
 
-                let batt = Math.round(clouddata.location.battery);
-                let batteryStatus = "Charged";
-                //console.log(`batt:${batt}, batteryPercentage ${this.batteryPercentage}`);
-                if (batt<100) {
-                    (clouddata.location.charge=='1') ? batteryStatus="Charging" : batteryStatus="NotCharging";
-                } else {
-                    if (this.batteryPercentage!=batt)
-                    {
-                        this.driver._triggers.trgBatteryCharged.trigger(this, {}, {}).catch(this.error );
-                    }
+            }
+
+
+            let batt = Math.round(clouddata.location.battery);
+            let batteryStatus = "Charged";
+            //console.log(`batt:${batt}, batteryPercentage ${this.batteryPercentage}`);
+            if (batt<100) {
+                (clouddata.location.charge=='1') ? batteryStatus="Charging" : batteryStatus="NotCharging";
+            } else {
+                if (this.batteryPercentage!=batt)
+                {
+                    this.driver._triggers.trgBatteryCharged.trigger(this, {}, {}).catch(this.error );
                 }
+            }
 
-                let charging = (batteryStatus === "Charging") || (batteryStatus==="Charged");
+            let charging = (batteryStatus === "Charging") || (batteryStatus==="Charged");
 
-                if (this.charging===null)
-                    this.charging = charging;
-                else if (!this.charging && charging) {
-                    // charging
-                    this.charging=charging;
-                    this.driver._triggers.trgDeviceCharging.trigger(this,{}).catch(this.error);
-                    this.log('Charging/Full');
-                } else if (this.charging && !charging) {
-                    // discharge
-                    this.log('Discharge');
-                    this.charging=charging;
-                }
-
-				this.setCapabilityValue('batteryCharged', Homey.__(batteryStatus)).catch((e) => {
-					this.log(`Unable to set batteryCharged: ${e.message}`);
-				});
+            if (this.charging===null)
+                this.charging = charging;
+            else if (!this.charging && charging) {
+                // charging
+                this.charging=charging;
+                this.driver._triggers.trgDeviceCharging.trigger(this,{}).catch(this.error);
+                this.log('Charging/Full');
+            } else if (this.charging && !charging) {
+                // discharge
+                this.log('Discharge');
+                this.charging=charging;
+            }
 
 
-                this.batteryPercentage = Math.round(clouddata.location.battery);
-                this.place = clouddata.location.name;
 
-                //if (this.getCapabilityValue('measure_battery') !== this.batteryPercentage) { 
-                    this.driver._triggers.trgDeviceBattery.trigger(this, { "batteryPercentage": this.batteryPercentage }, { "batteryPercentage": this.batteryPercentage }).catch(this.error );
-                //}
+            this.batteryPercentage = Math.round(clouddata.location.battery);
+            this.place = clouddata.location.name;
+
+            //if (this.getCapabilityValue('measure_battery') !== this.batteryPercentage) { 
+                this.driver._triggers.trgDeviceBattery.trigger(this, { "batteryPercentage": this.batteryPercentage }, { "batteryPercentage": this.batteryPercentage }).catch(this.error );
+            //}
 
 
-				this.setCapabilityValue('measure_battery', this.batteryPercentage).catch((e) => {
-					this.log(`Unable to set measure_battery : ${e.message}`);
-				});
-
-			}
-		} catch (error) {
-			this.log(error);
-		}
+            await Promise.all([ 
+                this.setCapabilityValue('batteryCharged', Homey.__(batteryStatus)).catch((e) => {this.log(`Unable to set batteryCharged: ${e.message}`);}),
+                this.setCapabilityValue('measure_battery', this.batteryPercentage).catch((e) => {this.log(`Unable to set measure_battery : ${e.message}`)}),
+            ]);
+        }
 	}
 
     getState(state){
