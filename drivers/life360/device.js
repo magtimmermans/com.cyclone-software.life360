@@ -133,7 +133,8 @@ class Life360Dev extends Homey.Device {
                     this.setCapabilityValue("drvSpeed", clouddata.location.speed>1 ? Math.round(clouddata.location.speed) : 0).catch(e => {this.log(`Unable to set driveSpeed: ${ e.message }`);}),
                 ]);
 
-                if (this.place == null) this.place = clouddata.location.name;
+                if (this.place == null) this.place='';
+                if (clouddata.location.name == null) clouddata.location.name='';
 
                 if (this.place != clouddata.location.name) {
 
