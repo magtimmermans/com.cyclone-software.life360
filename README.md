@@ -5,6 +5,9 @@ This is an unoffical app that connects to the Life 360 App to read location info
 ###
 Please make sure that this app is my private work and therefore it will never be supported by Life360. LIfe360 endpoints and functionality can be changed every time. Using this App is on your risk. 
 
+### v1.1.7 
+stabalization fixes to keep syncing.
+
 ### v1.1.6
 Small fix entering place.
 

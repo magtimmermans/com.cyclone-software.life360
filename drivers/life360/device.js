@@ -138,7 +138,7 @@ class Life360Dev extends Homey.Device {
 
                 if (this.place != clouddata.location.name) {
 
-                    console.log(`place:${this.place} -> locname:${clouddata.location.name}`)
+                   // console.log(`place:${this.place} -> locname:${clouddata.location.name}`)
 
                     this.driver._triggers.trgDeviceArrivesPlace.trigger(this, {"place" : clouddata.location.name},{"places" : clouddata.location.name, "oldplace" : this.place}).catch((err) => {
                         console.log(`err: ${err}`);

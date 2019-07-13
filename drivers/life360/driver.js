@@ -15,6 +15,7 @@ class Life360Driver extends Homey.Driver {
 
         this.placeTokens = [];
         this.session = {};// null;
+        this.timeout=null;
 
         this.settings = Homey.ManagerSettings.get('settings');
 
@@ -26,6 +27,11 @@ class Life360Driver extends Homey.Driver {
                 this.settings = Homey.ManagerSettings.get('settings')
                 console.log('New settings:')
                 console.log(this.settings)
+
+                if (this.timeout==null)
+                    clearInterval(timeout);
+
+                this.timeout = setInterval(this.poll.bind(this),  this.settings.synctime * MINUTE);
             }
         });
 
@@ -48,32 +54,11 @@ class Life360Driver extends Homey.Driver {
         console.log('end session');
 
         // Start syncing periodically.
-        this.shouldSync = true;
-        this.startSyncing();
-    }
-
-    async startSyncing() {
-        // Prevent more than one syncing cycle.
-        if (this.syncRunning) return;
-    
-        // Start syncing.
-        this.syncRunning = true;
-        this.log('starting sync');
-        this.sync();
+        this.timeout = setInterval(this.poll.bind(this), this.settings.synctime * MINUTE);
     }
     
-    async sync() {
-        if (! this.shouldSync || this.isSyncing) return;
-
-        this.isSyncing = true;
-        let synctime  = 1;
- 
+    async poll() {
         try {
-            if (this.settings)
-                synctime = this.settings.synctime;
-
-             this.log(`syncing (${synctime}min)`);
-
             await this.updateStatus().then(d => {this.log("update ok");}).catch(e => {this.log(`update error: ${e}`);});
             await this.updatePlaces().then(t => {
                 this.placeTokens = t;
@@ -81,14 +66,7 @@ class Life360Driver extends Homey.Driver {
         } catch(e) {
           this.log('error syncing', e);
         }
-        this.isSyncing = false;
         this.log('ready syncing');
-    
-        // Schedule next sync.
-        this.timeout = setTimeout(
-          () => this.sync(),
-           synctime*MINUTE
-        );
     }
 
     async updateStatus() {
