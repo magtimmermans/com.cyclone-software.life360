@@ -18,6 +18,8 @@ class Life360Dev extends Homey.Device {
         this.presense = null;
         this.charging = null;
         this.place = null;
+        this.isDriving=false;
+        this.Moving=false;
 
 
 		let data = this.getData();
@@ -102,9 +104,13 @@ class Life360Dev extends Homey.Device {
                 let myLatitude = Homey.ManagerGeolocation.getLatitude();
                 let myLongitude = Homey.ManagerGeolocation.getLongitude();
 
-                let isDriving = !!+clouddata.location.isDriving;
+                let oldIsDriving = this.isDriving;
+                let oldIsIntransit = this.inTransit;
+
+                this.isDriving = !!+clouddata.location.isDriving;
+                this.Moving = !!+clouddata.location.inTransit;
+
                 let WiFiState = !!+clouddata.location.wifiState;
-                let Moving = !!+clouddata.location.inTransit;
 
                 clouddata.location.speed = clouddata.location.speed * SPEED_FACTOR_MS;
 
@@ -125,8 +131,8 @@ class Life360Dev extends Homey.Device {
                     this.setCapabilityValue("Distance", this.formatDistance(this.distance)).catch(e => {this.log(`Unable to set Distance: ${ e.message }`);}),
                     this.setCapabilityValue("DistanceKM", formatValue3(this.distance/1000)).catch(e => {this.log(`Unable to set DistanceKM: ${ e.message }`);}),
                     this.setCapabilityValue("wifiState", Homey.__(this.getState(WiFiState))).catch(e => {this.log(`Unable to set wifiState: ${ e.message }`);}),
-                    this.setCapabilityValue("driving", Homey.__(this.getState(isDriving))).catch(e => {this.log(`Unable to set driving: ${ e.message }`);}),
-                    this.setCapabilityValue("transit", Homey.__(this.getState(Moving))).catch(e => {this.log(`Unable to set transit: ${ e.message }`);}),
+                    this.setCapabilityValue("driving", Homey.__(this.getState(this.isDriving))).catch(e => {this.log(`Unable to set driving: ${ e.message }`);}),
+                    this.setCapabilityValue("transit", Homey.__(this.getState(this.Moving))).catch(e => {this.log(`Unable to set transit: ${ e.message }`);}),
                     this.setCapabilityValue("place", clouddata.location.name).catch(e => {this.log(`Unable to set place: ${ e.message }`);}),
                     this.setCapabilityValue("accuracy", parseInt(clouddata.location.accuracy)).catch(e => {this.log(`Unable to set accuracy: ${ e.message }`);}),
                     this.setCapabilityValue("lastSeen", lastSeen).catch(e => {this.log(`Unable to set lastSeen: ${ e.message }`);}),
@@ -148,6 +154,12 @@ class Life360Dev extends Homey.Device {
                         console.log(`err: ${err}`);
                     });;
 
+                }
+
+                
+                if ((!oldIsDriving && this.isDriving) || (!oldIsIntransit && this.inTransit))
+                {
+                    this.driver._triggers.trgDeviceMoving.trigger(this,{}).catch(this.error);
                 }
 
 
@@ -177,6 +189,7 @@ class Life360Dev extends Homey.Device {
                 this.log('Charging/Full');
             } else if (this.charging && !charging) {
                 // discharge
+                this.driver._triggers.trgDeviceNotCharging.trigger(this,{}).catch(this.error);
                 this.log('Discharge');
                 this.charging=charging;
             }

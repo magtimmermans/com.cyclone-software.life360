@@ -143,9 +143,11 @@ class Life360Driver extends Homey.Driver {
            trgDeviceLeft : new Homey.FlowCardTriggerDevice("device_left").register(),
            trgDeviceBattery : new Homey.FlowCardTriggerDevice("triggerBattery").register(),
            trgDeviceCharging : new Homey.FlowCardTriggerDevice("BatteryCharging").register(),
+           trgDeviceNotCharging : new Homey.FlowCardTriggerDevice("triggerBatteryNotCharging").register(),
            trgDeviceLeftPlace : new Homey.FlowCardTriggerDevice("device_left_place").register(),
            trgDeviceArrivesPlace : new Homey.FlowCardTriggerDevice("device_arrives_place").register(),
-           trgBatteryCharged : new Homey.FlowCardTriggerDevice("triggerBatteryCharged").register(),         
+           trgBatteryCharged : new Homey.FlowCardTriggerDevice("triggerBatteryCharged").register(),  
+           trgDeviceMoving  : new Homey.FlowCardTriggerDevice("triggerDeviceMoving").register(),  
         }
 
         this._triggers.trgDeviceLeftPlace.getArgument('places').registerAutocompleteListener(( query, args ) => {

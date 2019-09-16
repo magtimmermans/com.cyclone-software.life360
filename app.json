@@ -1,6 +1,6 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -331,8 +331,36 @@
            "filter": "driver_id=life360"
          }
        ]
-    }
-    ],
+    }, 
+    {
+    "id": "triggerBatteryNotCharging",
+      "title": {
+         "en": "Battery not charging",
+         "nl": "Accu ontlading gestart"
+      },
+      "args":[
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=life360"
+        }
+      ]
+   }, 
+   {
+   "id": "triggerDeviceMoving",
+     "title": {
+        "en": "Device is moving",
+        "nl": "Device beweegt"
+     },
+     "args":[
+       {
+         "name": "device",
+         "type": "device",
+         "filter": "driver_id=life360"
+       }
+     ]
+  }  
+  ],
     "conditions": [
         {
           "id": "DeviceAtHome",
