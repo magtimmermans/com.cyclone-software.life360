@@ -107,8 +107,15 @@ class Life360Dev extends Homey.Device {
                 let oldIsDriving = this.isDriving;
                 let oldIsIntransit = this.inTransit;
 
+                // console.log('isDriving:'+clouddata.location.isDriving);
+                // clouddata.location.isDriving='1';
+                // console.log('isDriving:'+clouddata.location.isDriving);
+
                 this.isDriving = !!+clouddata.location.isDriving;
                 this.Moving = !!+clouddata.location.inTransit;
+
+                // console.log(typeof this.isDriving);
+                // console.log(this.isDriving);
 
                 let WiFiState = !!+clouddata.location.wifiState;
 
@@ -155,10 +162,10 @@ class Life360Dev extends Homey.Device {
                     });;
 
                 }
-
-                
+               
                 if ((!oldIsDriving && this.isDriving) || (!oldIsIntransit && this.inTransit))
                 {
+                    console.log('Trg Moving...')
                     this.driver._triggers.trgDeviceMoving.trigger(this,{}).catch(this.error);
                 }
 
