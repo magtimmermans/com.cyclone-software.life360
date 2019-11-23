@@ -3,30 +3,33 @@
     "en": "republish"
   },
   "v1.1.8": {
-    "en" : "added trigger battery not discharging, added trigger device moving" 
-  },   
-  "v1.1.7" : {
-    "en" : "stabalization fixes to keep syncing."
-  },   
-  "v1.1.6" : {
-    "en" : "Small fix entering place."
-  },   
-  "v1.1.5" : {
-    "en" : "Changed Capabities, added trigger battery charged, Fixed leaving/comming place trigger, added unvisible capebility for distance in KM (to use in logic fields). Please re-install all devices and check the flows (sorry). Made temporary fix for isDriving until api give this information (now isDrving is true when speed > 20). Adjust logfiles to 50 lines and removed debuging information"
-  },   
-  "v1.1.3" : {
-    "en" : "App rejected. Changed name."
-  },   
-  "v1.1.2" : {
-    "en" : "New forum topic and improved Speed calculation"
-  },   
-  "v1.1.1" : {
-    "en" : "Added inTransit and GPS accuracy, fixed driving mode."
-  },   
-  "v1.1.0" : {
-    "en" : "Added places, different sensors, re-using session and new triggers, You need to remove your device and add it again because changes in the capabilities."
-  },   
-  "v1.0.0" : {
-    "en" : "First BETA release (When in princible working I will try to add more functions)"
+    "en": "added trigger battery not discharging, added trigger device moving"
+  },
+  "v1.1.7": {
+    "en": "stabalization fixes to keep syncing."
+  },
+  "v1.1.6": {
+    "en": "Small fix entering place."
+  },
+  "v1.1.5": {
+    "en": "Changed Capabities, added trigger battery charged, Fixed leaving/comming place trigger, added unvisible capebility for distance in KM (to use in logic fields). Please re-install all devices and check the flows (sorry). Made temporary fix for isDriving until api give this information (now isDrving is true when speed > 20). Adjust logfiles to 50 lines and removed debuging information"
+  },
+  "v1.1.3": {
+    "en": "App rejected. Changed name."
+  },
+  "v1.1.2": {
+    "en": "New forum topic and improved Speed calculation"
+  },
+  "v1.1.1": {
+    "en": "Added inTransit and GPS accuracy, fixed driving mode."
+  },
+  "v1.1.0": {
+    "en": "Added places, different sensors, re-using session and new triggers, You need to remove your device and add it again because changes in the capabilities."
+  },
+  "v1.0.0": {
+    "en": "First BETA release (When in princible working I will try to add more functions)"
+  },
+  "1.2.0": {
+    "en": "republish as not possible to delete in app store"
   }
 }

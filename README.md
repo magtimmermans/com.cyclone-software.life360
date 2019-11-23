@@ -5,35 +5,6 @@ This is an unoffical app that connects to the Life 360 App to read location info
 ###
 Please make sure that this app is my private work and therefore it will never be supported by Life360. LIfe360 endpoints and functionality can be changed every time. Using this App is on your risk. 
 
-### v1.1.8
-added trigger battery not discharging
-added trigger device moving
-
-### v1.1.7 
-stabalization fixes to keep syncing.
-
-### v1.1.6
-Small fix entering place.
-
-### v1.1.5
-Changed Capabities, added trigger battery charged, Fixed leaving/comming place trigger, added unvisible capebility for distance in KM (to use in logic fields). Please re-install all devices and check the flows (sorry). Made temporary fix for isDriving until api give this information (now isDrving is true when speed > 20).
-Adjust logfiles to 50 lines and removed debuging information
-
-### v1.1.3
-App rejected. Changed name.
-
-### v1.1.2
-New forum topic and improved Speed calculation
-
-### v1.1.1
-Added inTransit and GPS accuracy, fixed driving mode. 
-
-### v1.1.0
-Added places, different sensors, re-using session and new triggers, You need to remove your device and add it again because changes in the capabilities.
-
-### v1.0.0
-First BETA release (When in princible working I will try to add more functions)
-
 
 ---
 
