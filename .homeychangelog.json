@@ -31,5 +31,11 @@
   },
   "1.2.0": {
     "en": "republish as not possible to delete in app store"
+  },
+  "1.2.1": {
+    "en": "need to update readme. Cannot delete so version bump"
+  },
+  "1.2.2": {
+    "en": "Bugfixes regarding is driving and some other small items"
   }
 }

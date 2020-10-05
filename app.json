@@ -1,6 +1,6 @@
 {
   "id": "com.cyclone-software.life360",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -9,11 +9,11 @@
   "brandColor": "#E8461D",
   "homeyCommunityTopicId": 14750,
   "contributing": {
-      "donate": {
-          "paypal": {
-              "username": "marceltimmermans"
-          }
+    "donate": {
+      "paypal": {
+        "username": "marceltimmermans"
       }
+    }
   },
   "description": {
     "en": "Show your Life360 App location information on homey",
@@ -33,57 +33,57 @@
     "name": "Marcel Timmermans",
     "email": "marcel@timmermans.us"
   },
-  "capabilities" : {
-       "Distance": {
-          "type": "string",
-          "title": {
-              "en": "Distance from Homey",
-              "nl": "Afstand tot Homey"
-          },
-          "getable": true,
-          "setable": false,
-          "preventInsights": true,
-          "uiComponent": "sensor",
-          "icon": "./drivers/life360/assets/distance.svg"
+  "capabilities": {
+    "Distance": {
+      "type": "string",
+      "title": {
+        "en": "Distance from Homey",
+        "nl": "Afstand tot Homey"
       },
-      "DistanceKM": {
-        "type": "number",
-        "title": {
-            "en": "Distance from Homey",
-            "nl": "Afstand tot Homey"
-        },
-        "getable": true,
-        "setable": false,
-        "units": "KM",
-        "uiComponent": null
+      "getable": true,
+      "setable": false,
+      "preventInsights": true,
+      "uiComponent": "sensor",
+      "icon": "./drivers/life360/assets/distance.svg"
     },
-      "wifiState": {
-        "type": "string",
-        "title": {
-            "en": "Wifi State",
-            "nl": "Wifi Status"
-        },
-        "getable": true,
-        "setable": false,
-        "preventInsights": true,
-        "icon": "./drivers/life360/assets/wifi.svg"
+    "DistanceKM": {
+      "type": "number",
+      "title": {
+        "en": "Distance from Homey",
+        "nl": "Afstand tot Homey"
+      },
+      "getable": true,
+      "setable": false,
+      "units": "KM",
+      "uiComponent": null
+    },
+    "wifiState": {
+      "type": "string",
+      "title": {
+        "en": "Wifi State",
+        "nl": "Wifi Status"
+      },
+      "getable": true,
+      "setable": false,
+      "preventInsights": true,
+      "icon": "./drivers/life360/assets/wifi.svg"
     },
     "place": {
       "type": "string",
       "title": {
-          "en": "Place",
-          "nl": "Plaats"
+        "en": "Place",
+        "nl": "Plaats"
       },
       "getable": true,
       "setable": false,
       "preventInsights": true,
       "icon": "./drivers/life360/assets/location.svg"
-      },
-      "batteryCharged": {
+    },
+    "batteryCharged": {
       "type": "string",
       "title": {
-          "en": "Battery status",
-          "nl": "Accu status"
+        "en": "Battery status",
+        "nl": "Accu status"
       },
       "getable": true,
       "setable": false,
@@ -94,21 +94,21 @@
     "drvSpeed": {
       "type": "number",
       "title": {
-          "en": "Speed",
-          "nl": "Snelheid"
+        "en": "Speed",
+        "nl": "Snelheid"
       },
       "getable": true,
       "setable": false,
       "insights": true,
       "uiComponent": "sensor",
-      "units" : "km/h",
+      "units": "km/h",
       "icon": "./drivers/life360/assets/speedometer.svg"
     },
     "accuracy": {
       "type": "number",
       "title": {
-          "en": "Accuracy GPS",
-          "nl": "Nauwkeurigheid GPS"
+        "en": "Accuracy GPS",
+        "nl": "Nauwkeurigheid GPS"
       },
       "getable": true,
       "setable": false,
@@ -119,8 +119,8 @@
     "driving": {
       "type": "string",
       "title": {
-          "en": "Drive",
-          "nl": "Rijden"
+        "en": "Drive",
+        "nl": "Rijden"
       },
       "getable": true,
       "setable": false,
@@ -131,8 +131,8 @@
     "transit": {
       "type": "string",
       "title": {
-          "en": "Transit",
-          "nl": "Onderweg"
+        "en": "Transit",
+        "nl": "Onderweg"
       },
       "getable": true,
       "setable": false,
@@ -143,8 +143,8 @@
     "lastSeen": {
       "type": "string",
       "title": {
-          "en": "Lastseen",
-          "nl": "Laatst gezien"
+        "en": "Lastseen",
+        "nl": "Laatst gezien"
       },
       "getable": true,
       "setable": false,
@@ -152,37 +152,57 @@
       "icon": "./drivers/life360/assets/lastseen.svg"
     }
   },
-  "drivers": [{
-        "id": "life360",
-        "name": {
-            "en": "Life360 devices"
+  "drivers": [
+    {
+      "id": "life360",
+      "name": {
+        "en": "Life360 devices"
+      },
+      "images": {
+        "large": "drivers/life360/assets/images/large.jpg",
+        "small": "drivers/life360/assets/images/small.jpg"
+      },
+      "class": "other",
+      "capabilities": [
+        "measure_battery",
+        "Distance",
+        "DistanceKM",
+        "accuracy",
+        "wifiState",
+        "place",
+        "batteryCharged",
+        "drvSpeed",
+        "driving",
+        "transit",
+        "lastSeen"
+      ],
+      "energy": {
+        "approximation": {
+          "usageConstant": 15
         },
-        "images": {
-            "large": "drivers/life360/assets/images/large.jpg",
-            "small": "drivers/life360/assets/images/small.jpg"
-        },
-        "class": "other",
-        "capabilities": [
-            "measure_battery", "Distance","DistanceKM","accuracy","wifiState","place", "batteryCharged", "drvSpeed","driving","transit", "lastSeen"
-        ],
-        "pair": [
-          {
-            "id": "login_credentials",
-            "template": "login_credentials"
-          },
-          {
-            "id": "list_devices",
-            "template": "list_devices",
-            "navigation": {
-              "next": "add_devices"
-            }
-          },
-          {
-            "id": "add_devices",
-            "template": "add_devices"
-          }
+        "batteries": [
+          "INTERNAL"
         ]
-  }],
+      },
+      "pair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ]
+    }
+  ],
   "flow": {
     "triggers": [
       {
@@ -219,13 +239,15 @@
           "en": "Device left place",
           "nl": "Device verlaat deze plek"
         },
-        "tokens": [{
-          "name": "place",
-          "title": {
+        "tokens": [
+          {
+            "name": "place",
+            "title": {
               "en": "Place",
               "nl": "Plaats"
+            }
           }
-        }],
+        ],
         "args": [
           {
             "name": "device",
@@ -236,8 +258,8 @@
             "name": "places",
             "type": "autocomplete",
             "placeholder": {
-                "en": "Place",
-                "nl": "Plaats"
+              "en": "Place",
+              "nl": "Plaats"
             }
           }
         ]
@@ -248,13 +270,15 @@
           "en": "Device arrives place",
           "nl": "Device komt aan op deze plek"
         },
-        "tokens": [{
-          "name": "place",
-          "title": {
+        "tokens": [
+          {
+            "name": "place",
+            "title": {
               "en": "Place",
               "nl": "Plaats"
+            }
           }
-        }],
+        ],
         "args": [
           {
             "name": "device",
@@ -265,141 +289,142 @@
             "name": "places",
             "type": "autocomplete",
             "placeholder": {
-                "en": "Place",
-                "nl": "Plaats"
+              "en": "Place",
+              "nl": "Plaats"
             }
           }
         ]
       },
       {
-      "id": "triggerBattery",
+        "id": "triggerBattery",
         "title": {
-           "en": "Battery is below a certain percentage",
-           "nl": "Accu beneden een bepaald percentage komt"
+          "en": "Battery is below a certain percentage",
+          "nl": "Accu beneden een bepaald percentage komt"
         },
         "tokens": [
-           {
-              "name": "batteryPercentage",
-              "type": "number",
-              "title": {
-                 "en": "Current battery percentage",
-                 "nl": "Huidige accu percentage"
-              },
-              "example": 25
-           }
+          {
+            "name": "batteryPercentage",
+            "type": "number",
+            "title": {
+              "en": "Current battery percentage",
+              "nl": "Huidige accu percentage"
+            },
+            "example": 25
+          }
         ],
-        "args":[
+        "args": [
           {
             "name": "device",
             "type": "device",
             "filter": "driver_id=life360"
           },
           {
-               "name": "batteryPercentage",
-               "type": "number",
-               "placeholder": {
-                  "en": "Battery percentage",
-                  "nl": "Accu percentage"
-               }
-           }
+            "name": "batteryPercentage",
+            "type": "number",
+            "placeholder": {
+              "en": "Battery percentage",
+              "nl": "Accu percentage"
+            }
+          }
         ]
-     },
-     {
-      "id": "BatteryCharging",
+      },
+      {
+        "id": "BatteryCharging",
         "title": {
-           "en": "Battery Charging",
-           "nl": "Accu word opgeladen"
+          "en": "Battery Charging",
+          "nl": "Accu word opgeladen"
         },
-        "args":[
+        "args": [
           {
             "name": "device",
             "type": "device",
             "filter": "driver_id=life360"
           }
         ]
-     },
-     {
-     "id": "triggerBatteryCharged",
-       "title": {
+      },
+      {
+        "id": "triggerBatteryCharged",
+        "title": {
           "en": "Battery Charged",
           "nl": "Accu is opgeladen"
-       },
-       "args":[
-         {
-           "name": "device",
-           "type": "device",
-           "filter": "driver_id=life360"
-         }
-       ]
-    }, 
-    {
-    "id": "triggerBatteryNotCharging",
-      "title": {
-         "en": "Battery not charging",
-         "nl": "Accu ontlading gestart"
-      },
-      "args":[
-        {
-          "name": "device",
-          "type": "device",
-          "filter": "driver_id=life360"
-        }
-      ]
-   }, 
-   {
-   "id": "triggerDeviceMoving",
-     "title": {
-        "en": "Device is moving",
-        "nl": "Device beweegt"
-     },
-     "args":[
-       {
-         "name": "device",
-         "type": "device",
-         "filter": "driver_id=life360"
-       }
-     ]
-  }  
-  ],
-    "conditions": [
-        {
-          "id": "DeviceAtHome",
-          "title": {
-            "en": "Device is !{{home|away}}",
-            "nl": "Telefoon is !{{thuis|weg}}"
-          },
-          "args": [
-            {
-              "name": "device",
-              "type": "device",
-              "filter": "driver_id=life360"
-            }
-          ]
         },
-        {
-          "id": "deviceDistance",
-          "title": {
-              "en": "Device !{{is|isn't}} within distance ",
-              "nl": "Device !{{is|is niet}} binnen de afstand "
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+        "id": "triggerBatteryNotCharging",
+        "title": {
+          "en": "Battery not charging",
+          "nl": "Accu ontlading gestart"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+        "id": "triggerDeviceMoving",
+        "title": {
+          "en": "Device is moving",
+          "nl": "Device beweegt"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "DeviceAtHome",
+        "title": {
+          "en": "Device is !{{home|away}}",
+          "nl": "Telefoon is !{{thuis|weg}}"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
+          }
+        ]
+      },
+      {
+        "id": "deviceDistance",
+        "title": {
+          "en": "Device !{{is|isn't}} within distance ",
+          "nl": "Device !{{is|is niet}} binnen de afstand "
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=life360"
           },
-          "args": [{ 
-                "name": "device",
-                "type": "device",
-                "filter": "driver_id=life360"
-              },
-              {
-                  "name": "distance",
-                  "type": "number",
-                  "min": 0,
-                  "max": 100000000,
-                  "step": 1,
-                  "value": 100,
-                  "placeholder": {
-                      "en": "Distance in meters",
-                      "nl": "Afstand in meters"
-                  }
-              }
-          ]
+          {
+            "name": "distance",
+            "type": "number",
+            "min": 0,
+            "max": 100000000,
+            "step": 1,
+            "value": 100,
+            "placeholder": {
+              "en": "Distance in meters",
+              "nl": "Afstand in meters"
+            }
+          }
+        ]
       }
     ]
   }
