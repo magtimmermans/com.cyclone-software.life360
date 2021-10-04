@@ -214,23 +214,38 @@ class Life360Driver extends Homey.Driver {
             if (!this.session)
             {
                 this.log('new session');
-                return await life360.authenticate(this.settings.username, this.settings.password);
+                try {
+                  return await life360.authenticate(this.settings.username, this.settings.password);
+                } catch (error) {
+                  this.error(error);
+                  callback(error);
+                }
             }
             else
             {
                 // testing session with gettings Circles
                 return await life360.circles(this.session).then(async(c) => {
                     if (!c) {
+                      try {
                         this.session =  await life360.authenticate(this.settings.username, this.settings.password);  
                         this.log('reactived session')
                         return this.session;
+                      } catch (error) {
+                        this.error(error);
+                        callback(error);
+                      }
                     } //else //console.log(`reuse session ${c}`);
                     return this.session;       
                 }); 
             }           
         } catch (error) {
             console.log(error);
-            return await life360.authenticate(this.settings.username, this.settings.password);
+            try {
+              return await life360.authenticate(this.settings.username, this.settings.password);
+            } catch (error) {
+              this.error(error);
+              callback(error);
+            }
         }  
     }
 
